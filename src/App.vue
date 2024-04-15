@@ -1,15 +1,19 @@
 <template>
-  <main class="w-full h-full flex p-4 flex-col justify-center items-center gap-x-4">
-    <ul v-if="editor" class="w-1/2 border border-black">
-      <li v-for="item in items" :key="item.id" class="flex justify-center items-center w-full">
+  <main class="w-full max-h-screen flex p-4 justify-center items-center gap-4">
+    <div class="w-1/2 flex flex-col gap-y-4">
+    <div role="alert" className="alert flex justify-center items-center"> 目前光标位置在：{{ position }}</div>
+    <div>右侧编辑器的JSON结构</div>
+    <div className="mockup-code h-96 overflow-auto"><pre><code>{{ output }}</code></pre></div>
+    </div>
+
+    <div class="w-1/2">
+      <ul v-if="editor" class="border bg-base-200 rounded-box w-full">
+      <li v-for="item in items" :key="item.id" class="flex justify-center items-center w-full px-8">
         <span class="mr-auto">{{ item.value }}</span>
-        <button class="border rounded-md p-2" @click="handleItemClick(item)">插入文献</button>
+        <button class="btn" @click="handleItemClick(item)">插入文献</button>
       </li>
     </ul>
-    <div> 目前光标位置在：
-      {{ position }}</div>
-    <div class="w-1/2 border border-black">
-      <editor-content :editor="editor" />
+      <editor-content class="border border-black rounded-md mt-4" :editor="editor" />
     </div>
   </main>
 </template>
@@ -30,7 +34,7 @@ const items = ref(
     value:'这是第二篇参考文献'
   }
 ])
-const position = computed(()=>editor.value.reactiveState.value.selection.$anchor.pos)
+
 const editor = useEditor({
   extensions: [StarterKit,Superscript],
   editorProps: {
@@ -50,6 +54,8 @@ const editor = useEditor({
     </ul>
   `,
 })
+const position = computed(()=>editor.value && editor.value.reactiveState.value.selection.$anchor.pos)
+const output = computed(()=>editor.value && editor.value.getJSON())
 
 function handleItemClick(item) {
   if (!editor) {
@@ -75,4 +81,5 @@ const lastListItem = listItems[0]
 
 editor.value.commands.insertContentAt(lastListItem.lastChild, listContent)
 }
+
 </script>
