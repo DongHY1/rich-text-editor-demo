@@ -6,7 +6,8 @@
         <button class="border rounded-md p-2" @click="handleItemClick(item)">插入文献</button>
       </li>
     </ul>
-    <div> 目前光标位置在：{{ position }}</div>
+    <div> 目前光标位置在：
+      {{ position }}</div>
     <div class="w-1/2 border border-black">
       <editor-content :editor="editor" />
     </div>
