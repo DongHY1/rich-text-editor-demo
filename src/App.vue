@@ -1,25 +1,33 @@
 <template>
-  <main class="w-full max-h-screen flex p-4 justify-center items-center gap-4">
+  <main v-if="editor" class="w-full max-h-screen flex p-4 justify-center items-center gap-4">
     <div class="w-1/2 flex flex-col gap-y-4">
     <div role="alert" className="alert flex justify-center items-center"> 目前光标位置在：{{ position }}</div>
     <div>右侧编辑器的JSON结构</div>
     <div className="mockup-code h-96 overflow-auto"><pre><code>{{ output }}</code></pre></div>
     </div>
 
-    <div class="w-1/2">
+    <div class="w-1/2 flex flex-col gap-y-4">
       <ul v-if="editor" class="border bg-base-200 rounded-box w-full">
       <li v-for="item in items" :key="item.id" class="flex justify-center items-center w-full px-8">
         <span class="mr-auto">{{ item.value }}</span>
         <button class="btn" @click="handleItemClick(item)">插入文献</button>
       </li>
+    
     </ul>
-      <editor-content class="border border-black rounded-md mt-4" :editor="editor" />
+    <div class="w-full flex justify-center items-center gap-x-4" v-if="editor">
+      <button className="btn btn-sm" @click="setColor">文字变红</button>
+      <button className="btn btn-sm" @click="setBold">文字加粗</button>
+    </div>
+    <editor-content class="border border-black rounded-md mt-4" :editor="editor" />
     </div>
   </main>
 </template>
 
 <script setup>
+import { Color } from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
+import Bold from '@tiptap/extension-bold'
 import Superscript from '@tiptap/extension-superscript'
 import StarterKit from '@tiptap/starter-kit'
 import { computed, ref } from 'vue';
@@ -36,7 +44,7 @@ const items = ref(
 ])
 
 const editor = useEditor({
-  extensions: [StarterKit,Superscript],
+  extensions: [StarterKit,Superscript,Bold,Color,TextStyle],
   editorProps: {
     attributes: {
       class: 'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
@@ -82,4 +90,12 @@ const lastListItem = listItems[0]
 editor.value.commands.insertContentAt(lastListItem.lastChild, listContent)
 }
 
+function setColor(){
+  editor.value.commands.setColor('red')
+}
+function setBold(){
+  editor.value.commands.setBold()
+}
+
 </script>
+
